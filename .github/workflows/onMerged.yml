@@ -1,0 +1,16 @@
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: construccion y subida a docker
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "missaellopez" --password-stdin
+        docker image build -t missaellopez/muuapp-server:${{ github.sha }} .
+        docker push missaellopez/muuapp-server:${{ github.sha }}
